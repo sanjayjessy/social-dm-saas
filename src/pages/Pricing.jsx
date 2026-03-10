@@ -144,7 +144,7 @@ export default function Pricing() {
                 <div className="flex-1 w-full max-w-[1400px] mx-auto">
                     <div className="flex items-center justify-center h-[60vh]">
                         <div className="text-center">
-                            <div className="text-[var(--text-dark)] text-[1.2em] mb-4">Loading pricing...</div>
+                            <div className="text-[var(--text-dark)] text-[1.2em] mb-4">Load pricing...</div>
                             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--primary-color)] mx-auto"></div>
                         </div>
                     </div>
