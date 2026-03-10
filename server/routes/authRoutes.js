@@ -80,12 +80,18 @@ router.post('/register', async (req, res) => {
       <p>This link will expire in 24 hours.</p>
     `;
 
-    // Send email non-blocking
-    sendEmail({
+    // Send verification email
+    const emailResult = await sendEmail({
       to: pendingUser.email,
       subject: "Welcome to ClickMyChat - Verify your Email",
       html: emailHtml
-    }).catch(err => console.error("Initial email send ignored error:", err));
+    });
+
+    if (!emailResult.success) {
+      console.error("❌ Failed to send verification email:", emailResult.error);
+    } else {
+      console.log("✅ Verification email sent to:", pendingUser.email);
+    }
 
     res.status(201).json({
       success: true,

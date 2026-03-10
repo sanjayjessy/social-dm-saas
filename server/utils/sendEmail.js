@@ -18,12 +18,18 @@ const sendEmail = async ({ to, subject, html }) => {
 
     const transporter = nodemailer.createTransport({
       host: SMTP_HOST,
-      port: SMTP_PORT || 587,
-      secure: SMTP_PORT == 465, // true for 465, false for other ports
+      port: Number(SMTP_PORT) || 587,
+      secure: Number(SMTP_PORT) === 465,
       auth: {
         user: SMTP_USER,
         pass: SMTP_PASS,
       },
+      connectionTimeout: 10000,  // 10s to connect
+      greetingTimeout: 10000,    // 10s for SMTP greeting
+      socketTimeout: 15000,      // 15s for socket inactivity
+      tls: {
+        rejectUnauthorized: false
+      }
     });
 
     const info = await transporter.sendMail({
