@@ -12,7 +12,7 @@ const getDefaultApiUrl = () => {
   return 'http://localhost:5000/api';
 };
 
-const API_BASE_URL = "https://social-dm-saas-1xce.onrender.com/api";
+const API_BASE_URL = "http://localhost:5000/api";
 
 // Get backend base URL (without /api)
 export const getBackendUrl = () => {
