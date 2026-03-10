@@ -8,6 +8,7 @@ const sendEmail = async ({ to, subject, html }) => {
 
     // 1️⃣ Try Brevo (Sendinblue) API First (Best for Render & Free Tier)
     if (process.env.BREVO_API_KEY) {
+      console.log("sanjay", process.env.BREVO_API_KEY)
       const response = await fetch('https://api.brevo.com/v3/smtp/email', {
         method: 'POST',
         headers: {
