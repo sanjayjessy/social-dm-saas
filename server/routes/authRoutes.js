@@ -72,7 +72,7 @@ router.post('/register', async (req, res) => {
       await pendingUser.save();
     }
 
-    const verifyUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/verify-email?token=${verificationToken}`;
+    const verifyUrl = `${process.env.FRONTEND_URL || 'https://clickmychats.netlify.app'}/verify-email?token=${verificationToken}`;
     const emailHtml = `
       <h2>Verify your ClickMyChat account</h2>
       <p>Thanks for signing up! Please confirm your email address to activate your account.</p>
