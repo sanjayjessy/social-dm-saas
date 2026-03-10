@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 export default function Pricing() {
     const [isYearly, setIsYearly] = useState(false);
     const [loadingUpgrade, setLoadingUpgrade] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
 
@@ -19,10 +20,13 @@ export default function Pricing() {
 
         // Fetch current user details for prefill
         const fetchUser = async () => {
+            setLoading(true);
             const res = await authAPI.getCurrentUser();
             if (res.success) {
                 setUser(res.data);
+                setLoading(false);
             }
+
         };
         fetchUser();
 
@@ -132,6 +136,21 @@ export default function Pricing() {
                 year: 'numeric'
             });
         }
+    }
+
+    if (loading) {
+        return (
+            <div className="px-4 mt-6">
+                <div className="flex-1 w-full max-w-[1400px] mx-auto">
+                    <div className="flex items-center justify-center h-[60vh]">
+                        <div className="text-center">
+                            <div className="text-[var(--text-dark)] text-[1.2em] mb-4">Loading pricing...</div>
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--primary-color)] mx-auto"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     return (
