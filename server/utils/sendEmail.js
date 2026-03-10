@@ -2,16 +2,16 @@ import nodemailer from 'nodemailer';
 
 const sendEmail = async ({ to, subject, html }) => {
   try {
-    const { RESEND_API_KEY, SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, FROM_EMAIL, APP_NAME } = process.env;
+    const { SENDGRID_API_KEY, SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, FROM_EMAIL, APP_NAME } = process.env;
     const fromAddress = FROM_EMAIL || 'onboarding@resend.dev';
     const fromName = APP_NAME || 'ClickMyChat';
 
     // 1️⃣ Try SendGrid API First (Best for Free Tier / Verified Gmail Sender)
-    if (process.env.SENDGRID_API_KEY) {
+    if (SENDGRID_API_KEY) {
       const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${process.env.SENDGRID_API_KEY}`,
+          'Authorization': `Bearer ${SENDGRID_API_KEY}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
