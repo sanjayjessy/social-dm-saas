@@ -230,10 +230,10 @@ router.post('/', protect, checkPlanLimits, enforceLinkLimit, async (req, res) =>
     try {
         const { link_name, slug, link, platform, status, destinationType, formId, whatsappNumber, whatsappMessage } = req.body;
 
-        // Check if slug already exists in this workspace
-        const existingLink = await Link.findOne({ slug, workspaceId: req.user.workspaceId });
+        // Check if slug already exists globally (slugs must be unique across all users)
+        const existingLink = await Link.findOne({ slug });
         if (existingLink) {
-            return res.status(400).json({ success: false, message: 'Slug already exists in your workspace' });
+            return res.status(400).json({ success: false, message: 'This slug is already taken. Please choose a different one.' });
         }
 
         // Validate based on destination type
@@ -285,7 +285,7 @@ router.post('/', protect, checkPlanLimits, enforceLinkLimit, async (req, res) =>
         res.status(201).json({ success: true, data: savedLink });
     } catch (error) {
         if (error.code === 11000) {
-            return res.status(400).json({ success: false, message: 'Slug already exists in your workspace' });
+            return res.status(400).json({ success: false, message: 'This slug is already taken. Please choose a different one.' });
         }
         res.status(500).json({ success: false, message: error.message });
     }
@@ -323,11 +323,11 @@ router.put('/:id', protect, async (req, res) => {
             updateData.formId = undefined;
         }
 
-        // Check if slug is being updated and if it already exists in the same workspace
+        // Check if slug is being updated and if it already exists globally
         if (slug) {
-            const existingLink = await Link.findOne({ slug, workspaceId: req.user.workspaceId, _id: { $ne: req.params.id } });
+            const existingLink = await Link.findOne({ slug, _id: { $ne: req.params.id } });
             if (existingLink) {
-                return res.status(400).json({ success: false, message: 'Slug already exists in your workspace' });
+                return res.status(400).json({ success: false, message: 'This slug is already taken. Please choose a different one.' });
             }
         }
 
@@ -344,7 +344,7 @@ router.put('/:id', protect, async (req, res) => {
         res.json({ success: true, data: updatedLink });
     } catch (error) {
         if (error.code === 11000) {
-            return res.status(400).json({ success: false, message: 'Slug already exists in your workspace' });
+            return res.status(400).json({ success: false, message: 'This slug is already taken. Please choose a different one.' });
         }
         res.status(500).json({ success: false, message: error.message });
     }

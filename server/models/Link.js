@@ -52,7 +52,8 @@ const linkSchema = new mongoose.Schema({
     slug: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
+        unique: true
     },
     destinationType: {
         type: String,
@@ -89,7 +90,7 @@ const linkSchema = new mongoose.Schema({
     timestamps: true
 });
 
-linkSchema.index({ workspaceId: 1, slug: 1 }, { unique: true });
+linkSchema.index({ slug: 1 }, { unique: true });
 
 const Link = mongoose.model('Link', linkSchema);
 
