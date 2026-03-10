@@ -4,21 +4,27 @@ const getDefaultApiUrl = () => {
   if (import.meta.env.VITE_API_BASE_URL) {
     return import.meta.env.VITE_API_BASE_URL;
   }
-  // In production (Netlify), default to Render URL
+
+  // Production (Netlify)
   if (import.meta.env.MODE === 'production' || import.meta.env.PROD) {
     return 'https://social-dm-saas-1xce.onrender.com/api';
   }
-  // Local development default
+
+  // Local development
   return 'http://localhost:5000/api';
 };
 
-const API_BASE_URL = "https://social-dm-saas-1xce.onrender.com/api";
+// Use the function here
+const API_BASE_URL = getDefaultApiUrl();
 
 // Get backend base URL (without /api)
 export const getBackendUrl = () => {
   const apiUrl = getDefaultApiUrl();
   return apiUrl.replace('/api', '');
 };
+
+export default API_BASE_URL;
+console.log(API_BASE_URL)
 
 // Helper to get full image URL
 export const getImageUrl = (imagePath) => {
