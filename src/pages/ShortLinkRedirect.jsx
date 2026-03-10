@@ -50,7 +50,7 @@ export default function ShortLinkRedirect() {
                 // 🔁 Redirect logic
                 if (link.destinationType === 'url' && link.link) {
                     let targetUrl = link.link;
-                    
+
                     // Add protocol if missing to prevent relative URL loops
                     if (!/^https?:\/\//i.test(targetUrl)) {
                         targetUrl = 'https://' + targetUrl;

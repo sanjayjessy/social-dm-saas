@@ -309,11 +309,16 @@ export const linkAPI = {
     }
   },
   update: async (id, data) => {
-    const response = await authFetch(`${API_BASE_URL}/links/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data)
-    });
-    return response.json();
+    try {
+      const response = await authFetch(`${API_BASE_URL}/links/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data)
+      });
+      return await response.json();
+    } catch (error) {
+      console.error('Error updating link:', error);
+      return { success: false, message: error.message || 'Failed to update link' };
+    }
   },
   delete: async (id) => {
     const response = await authFetch(`${API_BASE_URL}/links/${id}`, {
