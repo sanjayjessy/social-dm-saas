@@ -6,29 +6,33 @@ const sendEmail = async ({ to, subject, html }) => {
     const fromAddress = FROM_EMAIL || 'onboarding@resend.dev';
     const fromName = APP_NAME || 'ClickMyChat';
 
-    // 1️⃣ Try Resend First (Best for Render Production since SMTP is blocked)
-    if (RESEND_API_KEY) {
-      const response = await fetch('https://api.resend.com/emails', {
+    // 1️⃣ Try Brevo (Sendinblue) API First (Best for Render & Free Tier)
+    if (process.env.BREVO_API_KEY) {
+      const response = await fetch('https://api.brevo.com/v3/smtp/email', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${RESEND_API_KEY}`,
+          'api-key': process.env.BREVO_API_KEY,
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify({
-          from: `${fromName} <${fromAddress}>`,
-          to: [to],
-          subject,
-          html,
+          sender: {
+            name: fromName,
+            email: fromAddress // Important: must be your verified Brevo email 
+          },
+          to: [{ email: to }],
+          subject: subject,
+          htmlContent: html,
         }),
       });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        console.error("❌ Resend API error:", data);
+        console.error("❌ Brevo API error:", data);
         return { success: false, error: data };
       }
-      console.log("✅ Email sent via Resend. ID:", data.id);
-      return { success: true, messageId: data.id };
+      console.log("✅ Email sent via Brevo. ID:", data.messageId);
+      return { success: true, messageId: data.messageId };
     }
 
     // 2️⃣ Fallback to SMTP/Gmail (Works on Localhost, blocked on Render Free)
