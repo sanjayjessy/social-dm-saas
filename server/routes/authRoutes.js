@@ -205,19 +205,9 @@ router.post('/google-login', async (req, res) => {
     // Check if user exists by googleId or email
     let user = await User.findOne({ $or: [{ googleId }, { email }] });
 
-    if (actionType === 'signup' && user) {
-      return res.status(400).json({
-        success: false,
-        message: 'Account already exists. Please login instead.'
-      });
-    }
-
-    if (actionType === 'login' && !user) {
-      return res.status(404).json({
-        success: false,
-        message: 'Account not found. Please sign up.'
-      });
-    }
+    // No strict blocking — Google auth always uses find-or-create.
+    // If user already exists on signup: just log them in.
+    // If user doesn't exist on login: just create an account for them.
 
     if (!user) {
       // Create new user if doesn't exist

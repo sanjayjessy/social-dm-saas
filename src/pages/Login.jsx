@@ -44,10 +44,11 @@ export default function Login() {
             if (response.success) {
                 navigate("/analytics");
             } else {
-                setError(response.message || "Google Login failed");
+                setError(response.message || "Google Login failed. Please try again.");
             }
         } catch (err) {
-            setError("An error occurred with Google Login. Please try again.");
+            const msg = err?.response?.data?.message || err?.message || "";
+            setError(msg || "Google Login failed. Please try again.");
             console.error("Google Login error:", err);
         } finally {
             setLoading(false);

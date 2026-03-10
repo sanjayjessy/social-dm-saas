@@ -103,10 +103,11 @@ export default function Signup() {
             if (response.success) {
                 navigate("/analytics");
             } else {
-                setError(response.message || "Google Signup failed");
+                setError(response.message || "Google Signup failed. Please try again.");
             }
         } catch (err) {
-            setError("An error occurred with Google Signup. Please try again.");
+            const msg = err?.response?.data?.message || err?.message || "";
+            setError(msg || "Google Signup failed. Please try again.");
             console.error("Google Signup error:", err);
         } finally {
             setLoading(false);
