@@ -240,7 +240,7 @@ export default function Sidebar({ MobileMenuActive, setMobileMenuActive }) {
             </div>
 
             <div className="p-3">
-                <Link to="/pricing" className="bg-upgrade items-center  flex gap-2 justify-center text-[var(--text-light)] text-[16px] p-2 rounded-[5px]">
+                <a href="/pricing" className="bg-upgrade items-center  flex gap-2 justify-center text-[var(--text-light)] text-[16px] p-2 rounded-[5px]">
                     <MaskImage
                         url="/icons/upgrade.svg"
                         w="1.3em"
@@ -248,7 +248,7 @@ export default function Sidebar({ MobileMenuActive, setMobileMenuActive }) {
                         bg="var(--text-light)"
                     />
                     Upgrade
-                </Link>
+                </a>
             </div>
         </aside >
     );
