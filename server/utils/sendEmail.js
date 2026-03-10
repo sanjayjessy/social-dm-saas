@@ -6,34 +6,32 @@ const sendEmail = async ({ to, subject, html }) => {
     const fromAddress = FROM_EMAIL || 'onboarding@resend.dev';
     const fromName = APP_NAME || 'ClickMyChat';
 
-    // 1️⃣ Try Brevo (Sendinblue) API First (Best for Render & Free Tier)
-    if (process.env.BREVO_API_KEY) {
-      console.log("sanjay", process.env.BREVO_API_KEY)
-      const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+    // 1️⃣ Try SendGrid API First (Best for Free Tier / Verified Gmail Sender)
+    if (process.env.SENDGRID_API_KEY) {
+      const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
         method: 'POST',
         headers: {
-          'api-key': process.env.BREVO_API_KEY,
+          'Authorization': `Bearer ${process.env.SENDGRID_API_KEY}`,
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
         },
         body: JSON.stringify({
-          sender: {
-            name: fromName,
-            email: fromAddress // Important: must be your verified Brevo email 
-          },
-          to: [{ email: to }],
+          personalizations: [{
+            to: [{ email: to }]
+          }],
+          from: { email: fromAddress, name: fromName },
           subject: subject,
-          htmlContent: html,
+          content: [{ type: 'text/html', value: html }]
         }),
       });
 
-      const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        console.error("❌ Brevo API error:", data);
+        const data = await response.json().catch(() => ({}));
+        console.error("❌ SendGrid API error:", data);
         return { success: false, error: data };
       }
-      console.log("✅ Email sent via Brevo. ID:", data.messageId);
-      return { success: true, messageId: data.messageId };
+
+      console.log("✅ Email sent via SendGrid!");
+      return { success: true, messageId: "sendgrid-" + Date.now() };
     }
 
     // 2️⃣ Fallback to SMTP/Gmail (Works on Localhost, blocked on Render Free)
