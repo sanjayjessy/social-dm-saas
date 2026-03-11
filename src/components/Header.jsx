@@ -341,33 +341,43 @@ function Header({ setMobileMenuActive }) {
 
                             </div>
                             <div className="notification-content-wrapper-parent flex flex-col ">
-                                {notifyData.map((data) => {
-                                    const ui = buildNotificationUI(data);
-                                    return (
-                                        <div className="relative notification-content-wrapper" key={data._id}>
-                                            <a href={ui.link} onClick={() => markAsRead(data._id)} className={`notification-content ${data.isRead == true ? "" : "new"} relative border-b border-[var(--hover)] bg-[var(--bg-w)] hover:bg-[var(--hover)] flex gap-3 px-4 py-3`}>
-                                                <div className="profile-image-wrapper w-[35px] h-[35px] shadow-[0px_0px_10px_rgba(0,0,0,0.1)]  rounded-full  relative cursor-pointer">
-                                                    <img src={ui.image} className="absolute w-full h-full left-0 top-0 object-cover rounded-full" alt="" />
+                                {notifyData.length == 0 ? (
+                                    <div className="text-center py-12 flex flex-col items-center justify-center h-full">
+                                        <p className="text-[var(--text-dark)] text-[1em] mb-4">Notification not found</p>
+                                    </div>
+                                ) : (
+                                    <>
+                                        {notifyData.map((data) => {
+                                            const ui = buildNotificationUI(data);
+                                            return (
+                                                <div className="relative notification-content-wrapper" key={data._id}>
+                                                    <a href={ui.link} onClick={() => markAsRead(data._id)} className={`notification-content ${data.isRead == true ? "" : "new"} relative border-b border-[var(--hover)] bg-[var(--bg-w)] hover:bg-[var(--hover)] flex gap-3 px-4 py-3`}>
+                                                        <div className="profile-image-wrapper w-[35px] h-[35px] shadow-[0px_0px_10px_rgba(0,0,0,0.1)]  rounded-full  relative cursor-pointer">
+                                                            <img src={ui.image} className="absolute w-full h-full left-0 top-0 object-cover rounded-full" alt="" />
+                                                        </div>
+                                                        <div className="profile-content">
+                                                            <h2 className="text-[var(--text-dark)] text-[.8em] font-bold">{ui.title ? ui.title.charAt(0).toUpperCase() + ui.title.slice(1) : ""}</h2>
+                                                            <p className="text-[var(--text-dark-2)] opacity-70 font-medium text-[.75em]">{ui.message}</p>
+                                                            <p className="text-[var(--text-2)] opacity-80 font-medium text-[.6em] mt-2">{formatRelativeTime(data.createdAt)}</p>
+                                                        </div>
+                                                    </a>
+                                                    <div
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
+                                                            markAsRead(data._id);
+                                                            removeNotification(data._id);
+                                                        }}
+                                                        className="notification-cut absolute top-[50%] right-[12px] translate-y-[-50%] cursor-pointer rounded-full">
+                                                        <MaskImage url="/icons/close.svg" w="1.3em" h="1.3em" bg="var(--primary-color)" />
+                                                    </div>
                                                 </div>
-                                                <div className="profile-content">
-                                                    <h2 className="text-[var(--text-dark)] text-[.8em] font-bold">{ui.title ? ui.title.charAt(0).toUpperCase() + ui.title.slice(1) : ""}</h2>
-                                                    <p className="text-[var(--text-dark-2)] opacity-70 font-medium text-[.75em]">{ui.message}</p>
-                                                    <p className="text-[var(--text-2)] opacity-80 font-medium text-[.6em] mt-2">{formatRelativeTime(data.createdAt)}</p>
-                                                </div>
-                                            </a>
-                                            <div
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                    markAsRead(data._id);
-                                                    removeNotification(data._id);
-                                                }}
-                                                className="notification-cut absolute top-[50%] right-[12px] translate-y-[-50%] cursor-pointer rounded-full">
-                                                <MaskImage url="/icons/close.svg" w="1.3em" h="1.3em" bg="var(--primary-color)" />
-                                            </div>
-                                        </div>
-                                    )
-                                })}
+                                            )
+                                        })}
+                                    </>
+
+                                )}
+
                             </div>
                             <div className="px-2 py-3">
                                 <Link to={"/profile?tab=notification"} className={`flex items-center justify-center gap-3 py-2 px-4  cursor-pointer bg-[var(--primary-color)]  shadow-[0px_0px_10px_rgba(0,0,0,0.3)] hover:shadow-[0px_0px_10px_rgba(0,0,0,0.4)] duration-300  rounded-[4px]`}>

@@ -271,6 +271,30 @@ export const authAPI = {
       body: JSON.stringify({ email })
     });
     return await response.json();
+  },
+  forgotPassword: async (email) => {
+    const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    return await response.json();
+  },
+  verifyOtp: async (email, otp) => {
+    const response = await fetch(`${API_BASE_URL}/auth/verify-otp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, otp })
+    });
+    return await response.json();
+  },
+  resetPassword: async (resetToken, newPassword) => {
+    const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ resetToken, newPassword })
+    });
+    return await response.json();
   }
 };
 

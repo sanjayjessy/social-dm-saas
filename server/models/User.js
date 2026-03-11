@@ -60,6 +60,33 @@ const userSchema = new mongoose.Schema({
   verificationExpires: {
     type: Date
   },
+  // Password reset via OTP
+  resetPasswordOtpHash: {
+    type: String,
+    default: null
+  },
+  resetPasswordOtpExpires: {
+    type: Date,
+    default: null
+  },
+  resetPasswordAttempts: {
+    type: Number,
+    default: 0
+  },
+  // Rate-limit OTP send requests
+  otpRequestCount: {
+    type: Number,
+    default: 0
+  },
+  otpRequestWindowStart: {
+    type: Date,
+    default: null
+  },
+  // Used to invalidate JWTs issued before password change
+  passwordChangedAt: {
+    type: Date,
+    default: null
+  },
   workspaceId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Workspace',
