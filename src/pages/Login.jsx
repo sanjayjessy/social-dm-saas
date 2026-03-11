@@ -22,9 +22,6 @@ export default function Login() {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    // Points at the hidden GoogleLogin container so we can trigger its click
-    const googleBtnRef = useRef(null);
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
@@ -65,13 +62,6 @@ export default function Login() {
 
     const handleGoogleError = () => {
         setError("Google Login was unsuccessful. Please try again.");
-    };
-
-    // Click the real (hidden) Google button to trigger the OAuth popup
-    const triggerGoogleLogin = () => {
-        if (!googleBtnRef.current) return;
-        const btn = googleBtnRef.current.querySelector('div[role="button"], button');
-        if (btn) btn.click();
     };
 
     return (
@@ -132,34 +122,37 @@ export default function Login() {
                         <div className="border-t border-gray-300 flex-grow"></div>
                     </div>
 
-                    {/* ── Custom Google Button ── */}
-                    <div className="mb-4" style={{ position: "relative" }}>
-                        {/* Real GoogleLogin hidden behind our button */}
-                        <div ref={googleBtnRef} aria-hidden="true"
-                            style={{ position: "absolute", opacity: 0, pointerEvents: "none",
-                                     width: 1, height: 1, overflow: "hidden", top: 0, left: 0 }}>
-                            <GoogleLogin onSuccess={handleGoogleSuccess} onError={handleGoogleError} useOneTap={false} />
+                    {/* ── Custom Google Button (overlay approach) ── */}
+                    <div className="mb-4" style={{ position: "relative", height: 46 }}>
+                        {/* Our visible styled button (pointer-events off — the overlay captures clicks) */}
+                        <div style={{
+                            position: "absolute", inset: 0, zIndex: 1,
+                            display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
+                            background: "#fff", border: "1.5px solid #e2e8f0", borderRadius: 10,
+                            fontWeight: 600, fontSize: ".92em", color: "#374151",
+                            boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
+                            pointerEvents: "none",           // clicks pass through to the GoogleLogin below
+                            userSelect: "none"
+                        }}>
+                            <GoogleIcon />
+                            <span>Continue with Google</span>
                         </div>
 
-                        {/* Our styled button */}
-                        <button type="button" disabled={loading} onClick={triggerGoogleLogin}
-                            style={{
-                                display: "flex", alignItems: "center", justifyContent: "center",
-                                gap: 10, width: "100%", padding: "11px 16px",
-                                background: "#fff", border: "1.5px solid #e2e8f0", borderRadius: 10,
-                                cursor: loading ? "not-allowed" : "pointer",
-                                fontWeight: 600, fontSize: ".92em", color: "#374151",
-                                boxShadow: "0 1px 3px rgba(0,0,0,0.08)", transition: "all .2s ease",
-                                opacity: loading ? 0.6 : 1
-                            }}
-                            onMouseEnter={e => { if (!loading) { e.currentTarget.style.boxShadow = "0 4px 14px rgba(0,0,0,0.12)"; e.currentTarget.style.borderColor = "#cbd5e1"; e.currentTarget.style.transform = "translateY(-1px)"; }}}
-                            onMouseLeave={e => { e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.08)"; e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.transform = "translateY(0)"; }}
-                            onMouseDown={e => { e.currentTarget.style.background = "#f8fafc"; }}
-                            onMouseUp={e => { e.currentTarget.style.background = "#fff"; }}
-                        >
-                            <GoogleIcon />
-                            <span>{loading ? "Connecting…" : "Continue with Google"}</span>
-                        </button>
+                        {/* Real GoogleLogin — invisible overlay that receives actual clicks */}
+                        <div style={{
+                            position: "absolute", inset: 0, zIndex: 2,
+                            opacity: 0.01,                   // nearly invisible but present for clicks
+                            overflow: "hidden", borderRadius: 10,
+                            display: "flex"
+                        }}>
+                            <GoogleLogin
+                                onSuccess={handleGoogleSuccess}
+                                onError={handleGoogleError}
+                                useOneTap={false}
+                                width="600"
+                                size="large"
+                            />
+                        </div>
                     </div>
 
                     <div className="flex mt-5">

@@ -24,7 +24,6 @@ export default function Signup() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
-    // Post-signup verification state
     const [verificationSent, setVerificationSent] = useState(false);
     const [sentToEmail, setSentToEmail] = useState("");
     const [countdown, setCountdown] = useState(RESEND_COOLDOWN);
@@ -33,9 +32,7 @@ export default function Signup() {
     const timerRef = useRef(null);
 
     const navigate = useNavigate();
-    const googleBtnRef = useRef(null);
 
-    // Start / restart the resend countdown
     const startCountdown = () => {
         setCountdown(RESEND_COOLDOWN);
         clearInterval(timerRef.current);
@@ -103,13 +100,6 @@ export default function Signup() {
         setError("Google Signup was unsuccessful. Please try again.");
     };
 
-    // Trigger real Google OAuth popup via hidden button ref
-    const triggerGoogleLogin = () => {
-        if (!googleBtnRef.current) return;
-        const btn = googleBtnRef.current.querySelector('div[role="button"], button');
-        if (btn) btn.click();
-    };
-
     return (
         <div id="login-page" className="flex-1 p-4 w-full text-[16px]">
             <div className="login-card shadow">
@@ -122,22 +112,18 @@ export default function Signup() {
 
                 <div className="login-section">
                     {verificationSent ? (
-                        /* ── Verification sent panel ── */
                         <div className="py-2">
                             <h5 className="mb-4">CHECK YOUR EMAIL</h5>
-
                             <div style={{ border: "1px solid #d1d5db", borderRadius: "8px",
                                 padding: "10px 14px", fontSize: ".9em", color: "#374151",
                                 marginBottom: "16px", background: "#f9fafb" }}>
                                 {sentToEmail}
                             </div>
-
                             <p style={{ fontSize: ".88em", color: "#6b7280", marginBottom: "20px", lineHeight: "1.55" }}>
                                 We've sent a verification link to{" "}
                                 <strong style={{ color: "#374151" }}>{sentToEmail}</strong>.{" "}
                                 If you don't see it within 5 minutes, please check your spam or click resend.
                             </p>
-
                             {resendMsg && (
                                 <p style={{ fontSize: ".82em",
                                     color: resendMsg.includes("resent") ? "#16a34a" : "#dc2626",
@@ -145,7 +131,6 @@ export default function Signup() {
                                     {resendMsg}
                                 </p>
                             )}
-
                             <button onClick={handleResend} disabled={countdown > 0 || resending}
                                 style={{ width: "100%", padding: "11px", borderRadius: "8px", border: "none",
                                     background: countdown > 0 || resending ? "#9ca3af" : "#0f8b8d",
@@ -154,7 +139,6 @@ export default function Signup() {
                                     transition: "background .2s", marginBottom: "18px" }}>
                                 {resending ? "Sending..." : countdown > 0 ? `Resend (${countdown}s)` : "Resend Email"}
                             </button>
-
                             <div className="flex mt-2">
                                 <p className="text-[--text-dark] text-center w-full opacity-90 text-[.9em]">
                                     Already verified?{" "}
@@ -163,7 +147,6 @@ export default function Signup() {
                             </div>
                         </div>
                     ) : (
-                        /* ── Normal signup form ── */
                         <>
                             <h5>USER SIGNUP</h5>
 
@@ -183,7 +166,6 @@ export default function Signup() {
                                         className="form-control w-full py-2" placeholder="Full Name"
                                         required disabled={loading} />
                                 </div>
-
                                 <div className="input-group mb-3 flex">
                                     <span className="input-group-text w-[15%] flex justify-center items-center">
                                         <MaskImage url="/icons/mail.svg" w="1.2em" h="1.2em" bg="white" />
@@ -193,7 +175,6 @@ export default function Signup() {
                                         className="form-control w-full py-2" placeholder="Email"
                                         required disabled={loading} />
                                 </div>
-
                                 <div className="input-group mb-3 flex">
                                     <span className="input-group-text w-[15%] flex justify-center items-center">
                                         <MaskImage url="/icons/l-l.svg" w="1.2em" h="1.2em" bg="white" />
@@ -203,7 +184,6 @@ export default function Signup() {
                                         className="form-control w-full py-2" placeholder="Password"
                                         required disabled={loading} minLength={6} />
                                 </div>
-
                                 <button type="submit" className="login-btn cursor-pointer" disabled={loading}>
                                     {loading ? "Signing up..." : "Sign up"}
                                 </button>
@@ -216,34 +196,35 @@ export default function Signup() {
                                 <div className="border-t border-gray-300 flex-grow"></div>
                             </div>
 
-                            {/* ── Custom Google Button ── */}
-                            <div className="mb-4" style={{ position: "relative" }}>
-                                {/* Real GoogleLogin — hidden, handles the actual OAuth popup */}
-                                <div ref={googleBtnRef} aria-hidden="true"
-                                    style={{ position: "absolute", opacity: 0, pointerEvents: "none",
-                                             width: 1, height: 1, overflow: "hidden", top: 0, left: 0 }}>
-                                    <GoogleLogin onSuccess={handleGoogleSuccess} onError={handleGoogleError} useOneTap={false} />
+                            {/* ── Custom Google Button (overlay approach) ── */}
+                            <div className="mb-4" style={{ position: "relative", height: 46 }}>
+                                {/* Visible styled button layer (pointer-events off) */}
+                                <div style={{
+                                    position: "absolute", inset: 0, zIndex: 1,
+                                    display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
+                                    background: "#fff", border: "1.5px solid #e2e8f0", borderRadius: 10,
+                                    fontWeight: 600, fontSize: ".92em", color: "#374151",
+                                    boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
+                                    pointerEvents: "none", userSelect: "none"
+                                }}>
+                                    <GoogleIcon />
+                                    <span>Sign up with Google</span>
                                 </div>
 
-                                {/* Our styled button */}
-                                <button type="button" disabled={loading} onClick={triggerGoogleLogin}
-                                    style={{
-                                        display: "flex", alignItems: "center", justifyContent: "center",
-                                        gap: 10, width: "100%", padding: "11px 16px",
-                                        background: "#fff", border: "1.5px solid #e2e8f0", borderRadius: 10,
-                                        cursor: loading ? "not-allowed" : "pointer",
-                                        fontWeight: 600, fontSize: ".92em", color: "#374151",
-                                        boxShadow: "0 1px 3px rgba(0,0,0,0.08)", transition: "all .2s ease",
-                                        opacity: loading ? 0.6 : 1
-                                    }}
-                                    onMouseEnter={e => { if (!loading) { e.currentTarget.style.boxShadow = "0 4px 14px rgba(0,0,0,0.12)"; e.currentTarget.style.borderColor = "#cbd5e1"; e.currentTarget.style.transform = "translateY(-1px)"; }}}
-                                    onMouseLeave={e => { e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.08)"; e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.transform = "translateY(0)"; }}
-                                    onMouseDown={e => { e.currentTarget.style.background = "#f8fafc"; }}
-                                    onMouseUp={e => { e.currentTarget.style.background = "#fff"; }}
-                                >
-                                    <GoogleIcon />
-                                    <span>{loading ? "Connecting…" : "Sign up with Google"}</span>
-                                </button>
+                                {/* Real GoogleLogin — transparent overlay that receives actual clicks */}
+                                <div style={{
+                                    position: "absolute", inset: 0, zIndex: 2,
+                                    opacity: 0.01, overflow: "hidden", borderRadius: 10,
+                                    display: "flex"
+                                }}>
+                                    <GoogleLogin
+                                        onSuccess={handleGoogleSuccess}
+                                        onError={handleGoogleError}
+                                        useOneTap={false}
+                                        width="600"
+                                        size="large"
+                                    />
+                                </div>
                             </div>
 
                             <div className="flex mt-5">
