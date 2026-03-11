@@ -25,7 +25,8 @@ const PORT = process.env.PORT || 5000;
 app.use(cors({
   origin: [
     'http://localhost:5173',
-    'https://cmcpro.netlify.app'
+    'https://cmcpro.netlify.app',
+    'https://procmc.netlify.app'
   ],
   credentials: true
 }));
